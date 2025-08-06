@@ -1,0 +1,9 @@
+package world.xgraza.xcmd.executor;
+
+public interface DispatchCode
+{
+    int ERROR = -1;
+    int OK = 0;
+    int FAIL = 1;
+    int INVALID_ARGUMENT = 2;
+}
