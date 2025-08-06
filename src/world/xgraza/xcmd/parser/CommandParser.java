@@ -195,16 +195,16 @@ public final class CommandParser
         }
     }
 
-    private List<String> splitRawArguments(String raw)
+    private List<String> splitRawArguments(final String raw)
     {
-        raw = raw.substring(commandRegistry.getCommandPrefix().length()).trim();
-
         final List<String> rawArguments = new LinkedList<>();
-        final Matcher matcher = PHRASE_REGEX.matcher(raw);
+        final Matcher matcher = PHRASE_REGEX.matcher(raw
+                .substring(commandRegistry.getCommandPrefix().length())
+                .trim());
         while (matcher.find())
         {
-            String value;
-            if ((value = matcher.group(1)) == null)
+            String value = matcher.group(1);
+            if (value == null)
             {
                 value = matcher.group(0);
             }
