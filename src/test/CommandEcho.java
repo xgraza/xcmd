@@ -14,7 +14,7 @@ final class CommandEcho implements ICommandExecutor
     @Override
     public CommandResult dispatch(final CommandContext context)
     {
-        return context.resolve(context.getArgument("input"));
+        return context.ok(context.getArgument("input"));
     }
 
     @Override

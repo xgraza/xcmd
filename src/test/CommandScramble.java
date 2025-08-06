@@ -32,7 +32,7 @@ final class CommandScramble implements ICommandExecutor
             sentence.add(String.join("", characters));
         }
 
-        return context.resolve(String.join(" ", sentence));
+        return context.ok(String.join(" ", sentence));
     }
 
     @Override

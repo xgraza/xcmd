@@ -25,7 +25,7 @@ final class CommandHelp implements ICommandExecutor
         if (context.isArgumentResolved("command-name"))
         {
             final ICommandExecutor executor = context.getArgument("command-name");
-            return context.resolve("Aliases: " + String.join("|", executor.getAliases()));
+            return context.ok("Aliases: " + String.join("|", executor.getAliases()));
         }
         final StringBuilder builder = new StringBuilder();
         builder.append("Commands: ");
@@ -38,7 +38,7 @@ final class CommandHelp implements ICommandExecutor
             joiner.add(executor.getAliases()[0]);
         }
         builder.append(joiner);
-        return context.resolve(builder.toString());
+        return context.ok(builder.toString());
     }
 
     @Override

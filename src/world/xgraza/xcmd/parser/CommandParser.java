@@ -40,8 +40,11 @@ public final class CommandParser
      * @param raw the raw string input
      * @return null or {@link CommandContext}
      */
-    public CommandContext parse(final String raw)
-            throws LexerException, InvalidCommandException, ArgumentParseException, MissingArgumentException
+    public CommandContext parse(final String raw) throws LexerException,
+            InvalidCommandException,
+            ArgumentParseException,
+            MissingArgumentException,
+            ArgumentValidateFailureException
     {
         // first, put the raw input into "bite" size pieces of information
         final List<String> rawArguments = splitRawArguments(raw);
@@ -50,6 +53,7 @@ public final class CommandParser
         {
             return null;
         }
+
         // pop the first element to grab the command name
         final String commandName = rawArguments.remove(0);
 
@@ -60,9 +64,8 @@ public final class CommandParser
             throw new InvalidCommandException(commandName);
         }
 
-        final CommandContext parseResult = new CommandContext();
-        parseResult.setExecutor(executor);
-        parseResult.setRawInput(rawArguments);
+        // create the command context - this holds arguments, flags, and the executor
+        final CommandContext parseResult = new CommandContext(executor, rawArguments);
 
         // we should early on parse flags so theyre not considered normal arguments
         final List<Flag> flags = executor.getFlags();
@@ -79,44 +82,35 @@ public final class CommandParser
             return parseResult;
         }
 
-        // next, we must run each argument through a lexer (aka tokenizing)
-        // this will map each argument to a type
-        // raw argument -> type (ex: boolean, integer, string)
+        // "tokenize" each raw argument (ex: "balls" -> "string")
         final List<Token> tokenized = Lexer.tokenize(rawArguments);
 
-        // now that we have the types, we can use this to check against our argument types
-        // this will make the command parser "strict"
-        // TODO: option to ignore unknown args/flags?
+        // ensure we have the required arguments and the types match
         validateArguments(tokenized, arguments);
 
-        // next, we need to parse these tokens into objects
-        // this is the actually useful part to a command
-        try
-        {
-            parseResult.setResolvedArgumentMap(resolveArguments(tokenized, arguments));
-        }
-        catch (final Exception e)
-        {
-            throw new RuntimeException(e);
-        }
+        // resolve the arguments
+        // "resolve" is two parts: parse & validate
+        // parsing will actually give the object needed (such as turning a string literal "true" to true)
+        // validating is an additional step determined by the argument (ex: min/max bounds on a integer)
+        resolveArguments(tokenized, arguments, parseResult.getResolvedArguments());
 
         return parseResult;
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> resolveArguments(final List<Token> tokenized,
-                                                 final List<Argument<?>> arguments)
+    private void resolveArguments(final List<Token> tokenized,
+                                  final List<Argument<?>> arguments,
+                                  final Map<String, Object> resolvedArgumentMap)
             throws ArgumentValidateFailureException, ArgumentParseException
     {
-        final Map<String, Object> resolvedArgumentMap = new LinkedHashMap<>();
         if (tokenized.isEmpty())
         {
-            return resolvedArgumentMap;
+            return;
         }
+
         for (int i = 0; i < arguments.size(); ++i)
         {
             final Argument<?> argument = arguments.get(i);
-
             final Token token = tokenized.get(i);
             if (!argument.isRequired() && !token.getType().equals(argument.getTokenType()))
             {
@@ -127,74 +121,64 @@ public final class CommandParser
             {
                 final List<Token> restOfTokens = tokenized.subList(i, tokenized.size());
                 final StringJoiner joiner = new StringJoiner(" ");
+                // this is the type of greed foretold in the bible
                 for (final Token t : restOfTokens)
                 {
-                    // only be greedy to those of the same type
-                    // ex: this is a greedy argument 20 hello
-                    // the argument which is greedy will take input until the "20"
-                    // because the "20" is considered a different argument (an integer)
-                    // of course if it's surrounded in quotes, this wont matter.
-                    if (!t.getType().equals("string"))
-                    {
-                        break;
-                    }
                     joiner.add(t.getRaw());
                 }
                 resolvedArgumentMap.put(argument.getName(), joiner.toString());
-                return resolvedArgumentMap;
+                return;
             }
 
             final Object value = argument.parse(token.getRaw(), token.getType());
+            // hacky, but my pretty generics :(
             ((Argument<Object>) argument).validate(value);
             resolvedArgumentMap.put(argument.getName(), value);
         }
-        return resolvedArgumentMap;
     }
 
-    private void validateArguments(final List<Token> tokenized,
-                                     final List<Argument<?>> arguments)
+    private void validateArguments(final List<Token> tokenized, final List<Argument<?>> arguments)
             throws ArgumentParseException, MissingArgumentException
     {
-        final int required = arguments.stream()
-                .reduce(0, (p, arg) -> p + (arg.isRequired() ? 1 : 0), Integer::sum);
-        if (tokenized.size() < required)
-        {
-            throw new ArgumentParseException("Too little argument(s) (expected "
-                    + (arguments.size() > required ? "at minimum " : "")
-                    + required
-                    + " argument(s), got "
-                    + tokenized.size()
-                    + ")");
-        }
-
         for (int i = 0; i < arguments.size(); ++i)
         {
             final Argument<?> argument = arguments.get(i);
-            // finished...
             if (i > tokenized.size() - 1)
             {
-                if (argument.isRequired())
+                // non-required arguments are last, therefore we can stop here
+                if (!argument.isRequired())
                 {
-                    throw new MissingArgumentException(argument.getName());
+                    break;
                 }
-                break;
+                final List<String> missingArguments = new LinkedList<>();
+                for (int j = i; j < arguments.size(); ++j)
+                {
+                    final Argument<?> arg = arguments.get(j);
+                    if (arg.isRequired())
+                    {
+                        missingArguments.add(arg.getName() + "(" + arg.getTokenType() + ")");
+                    }
+                }
+                throw new MissingArgumentException("Missing " + missingArguments.size()
+                        + " argument(s): " + String.join(", ", missingArguments));
             }
+
             final Token token = tokenized.get(i);
-            if (!token.getType().equals(argument.getTokenType()))
+            if (!token.getType().equals(argument.getTokenType()) && argument.isRequired())
             {
-                throw new ArgumentParseException("Expected type "
-                        + argument.getTokenType()
-                        + " for argument '"
-                        + argument.getName()
-                        + "' but instead got type "
-                        + token.getType()
-                        + " from '"
-                        + token.getRaw()
-                        + "'");
+                throw new ArgumentParseException("Incorrect type supplied for '"
+                        + argument.getName() + "'! Type "
+                        + token.getType() + "' does not match the expected type '"
+                        + argument.getTokenType() + "'");
             }
         }
     }
 
+    /**
+     * Splits raw input into a list of arguments (supports "quoting of arguments")
+     * @param raw the raw input
+     * @return a list of strings split to represent an argument
+     */
     private List<String> splitRawArguments(final String raw)
     {
         final List<String> rawArguments = new LinkedList<>();

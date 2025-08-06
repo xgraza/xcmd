@@ -18,16 +18,16 @@ final class CommandRockPaperScissors implements ICommandExecutor
         final Move botMove = pickRandomMove();
         if (botMove.equals(playerMove))
         {
-            return context.resolve("We both picked " + botMove.name() + "! We tied");
+            return context.ok("We both picked " + botMove.name() + "! We tied");
         }
 
         final boolean win = botMove.getOutcomes()[playerMove.ordinal()];
         if (win)
         {
-            return context.resolve(botMove + " beats " + playerMove + ", I win!");
+            return context.ok(botMove + " beats " + playerMove + ", I win!");
         } else
         {
-            return context.resolve(botMove + " looses to " + playerMove + ", I loose!");
+            return context.ok(botMove + " looses to " + playerMove + ", I loose!");
         }
     }
 
