@@ -65,7 +65,7 @@ public final class CommandParser
         }
 
         // create the command context - this holds arguments, flags, and the executor
-        final CommandContext parseResult = new CommandContext(executor, rawArguments);
+        final CommandContext context = new CommandContext(executor, rawArguments);
 
         // we should early on parse flags so theyre not considered normal arguments
         final List<Flag> flags = executor.getFlags();
@@ -79,7 +79,7 @@ public final class CommandParser
         // if no arguments are present, resolve early
         if (arguments.isEmpty())
         {
-            return parseResult;
+            return context;
         }
 
         // "tokenize" each raw argument (ex: "balls" -> "string")
@@ -92,9 +92,9 @@ public final class CommandParser
         // "resolve" is two parts: parse & validate
         // parsing will actually give the object needed (such as turning a string literal "true" to true)
         // validating is an additional step determined by the argument (ex: min/max bounds on a integer)
-        resolveArguments(tokenized, arguments, parseResult.getResolvedArguments());
+        resolveArguments(tokenized, arguments, context.getResolvedArguments());
 
-        return parseResult;
+        return context;
     }
 
     @SuppressWarnings("unchecked")

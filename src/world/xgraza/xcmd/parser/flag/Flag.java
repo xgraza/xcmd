@@ -1,5 +1,11 @@
 package world.xgraza.xcmd.parser.flag;
 
+/**
+ * @author xgraza
+ * @since 08/06/2025
+ *
+ * Represents a flag for additional functionality
+ */
 public final class Flag
 {
     private final String name;

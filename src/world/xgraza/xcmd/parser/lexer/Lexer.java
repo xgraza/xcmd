@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 /**
  * @author xgraza
  * @since 08/06/2025
+ *
  * Turns raw arguments into tokens for further processing
  */
 public final class Lexer
@@ -17,6 +18,12 @@ public final class Lexer
     private static final Pattern NUMBER_REGEX = Pattern.compile("^-?[0-9,]+(\\.\\d+)?([LFDfd])?");
     private static final Pattern BOOLEAN_REGEX = Pattern.compile("true|false|t|f");
 
+    /**
+     * Tokenizes each argument
+     * @param arguments a {@link List<String>} of raw arguments
+     * @return a {@link List<Token>}
+     * @throws LexerException if a type could not be inferred
+     */
     public static List<Token> tokenize(final List<String> arguments)
             throws LexerException
     {
@@ -41,6 +48,7 @@ public final class Lexer
         return tokenList;
     }
 
+    // TODO: possibly improve?
     private static Token inferNumberType(final String argument) throws LexerException
     {
         final Matcher matcher = NUMBER_REGEX.matcher(argument);

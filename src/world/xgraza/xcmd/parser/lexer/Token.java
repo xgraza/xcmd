@@ -3,6 +3,7 @@ package world.xgraza.xcmd.parser.lexer;
 /**
  * @author xgraza
  * @since 08/06/2025
+ *
  * A token for the lexer. Provides the raw argument value and its inferred type
  */
 public final class Token
