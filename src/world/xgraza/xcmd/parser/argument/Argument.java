@@ -10,6 +10,11 @@ public abstract class Argument<T>
     private final T defaultValue;
     private boolean required = true, greedy;
 
+    public Argument(final Class<T> type)
+    {
+        this(type, null, null);
+    }
+
     public Argument(final Class<T> type, final String name)
     {
         this(type, name, null);
@@ -32,6 +37,11 @@ public abstract class Argument<T>
     public String getName()
     {
         return name;
+    }
+
+    public boolean isFlag()
+    {
+        return name == null;
     }
 
     public Class<T> getType()
@@ -69,7 +79,11 @@ public abstract class Argument<T>
     {
         if (!getTokenType().equals("string"))
         {
-            throw new RuntimeException("only type 'string' can be greedy");
+            throw new RuntimeException("Only type 'string' can be greedy");
+        }
+        if (isFlag())
+        {
+            throw new RuntimeException("Arguments associated with a flag cannot be greedy");
         }
         this.greedy = greedy;
         return this;

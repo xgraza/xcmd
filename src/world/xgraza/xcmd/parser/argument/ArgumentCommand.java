@@ -8,6 +8,11 @@ public final class ArgumentCommand extends Argument<ICommandExecutor>
 {
     private final ICommandRegistry commandRegistry;
 
+    public ArgumentCommand(final ICommandRegistry commandRegistry)
+    {
+        this(commandRegistry, null);
+    }
+
     public ArgumentCommand(final ICommandRegistry commandRegistry, final String name)
     {
         super(ICommandExecutor.class, name);

@@ -4,6 +4,11 @@ import world.xgraza.xcmd.parser.argument.exception.ArgumentValidateFailureExcept
 
 public class ArgumentNumber<T extends Number> extends Argument<T>
 {
+    public ArgumentNumber(final Class<T> type)
+    {
+        this(type, null);
+    }
+
     public ArgumentNumber(final Class<T> type, final String name)
     {
         super(type, name);

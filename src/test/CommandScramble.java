@@ -6,6 +6,7 @@ import world.xgraza.xcmd.parser.CommandContext;
 import world.xgraza.xcmd.parser.argument.Argument;
 import world.xgraza.xcmd.parser.argument.ArgumentNumber;
 import world.xgraza.xcmd.parser.argument.ArgumentString;
+import world.xgraza.xcmd.parser.flag.Flag;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -17,6 +18,10 @@ final class CommandScramble implements ICommandExecutor
     public CommandResult dispatch(CommandContext context)
     {
         final String input = context.getArgument("input");
+        if (context.hasFlag("ignore"))
+        {
+            return context.ok(input);
+        }
         final int times = context.getArgument("times");
 
         final List<String> sentence = new LinkedList<>();
@@ -42,6 +47,14 @@ final class CommandScramble implements ICommandExecutor
         arguments.add(ArgumentNumber.number(Integer.class, "times", 1, 20));
         arguments.add(ArgumentString.string("input", true));
         return arguments;
+    }
+
+    @Override
+    public List<Flag<?>> getFlags()
+    {
+        final List<Flag<?>> flags = new LinkedList<>();
+        flags.add(new Flag<>("ignore"));
+        return flags;
     }
 
     @Override

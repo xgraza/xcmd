@@ -5,6 +5,7 @@ import world.xgraza.xcmd.executor.ICommandExecutor;
 import world.xgraza.xcmd.parser.CommandContext;
 import world.xgraza.xcmd.parser.argument.Argument;
 import world.xgraza.xcmd.parser.argument.ArgumentEnum;
+import world.xgraza.xcmd.parser.flag.Flag;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +16,7 @@ final class CommandRockPaperScissors implements ICommandExecutor
     public CommandResult dispatch(final CommandContext context)
     {
         final Move playerMove = context.getArgument("move");
-        final Move botMove = pickRandomMove();
+        final Move botMove = context.getFlag("cheat", pickRandomMove());
         if (botMove.equals(playerMove))
         {
             return context.ok("We both picked " + botMove.name() + "! We tied");
@@ -42,6 +43,14 @@ final class CommandRockPaperScissors implements ICommandExecutor
         final List<Argument<?>> arguments = new LinkedList<>();
         arguments.add(new ArgumentEnum<>(Move.class, "move"));
         return arguments;
+    }
+
+    @Override
+    public List<Flag<?>> getFlags()
+    {
+        final List<Flag<?>> flags = new LinkedList<>();
+        flags.add(new Flag<>("cheat", new ArgumentEnum<>(Move.class)));
+        return flags;
     }
 
     @Override

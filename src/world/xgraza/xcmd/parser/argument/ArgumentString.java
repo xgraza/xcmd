@@ -4,6 +4,11 @@ import world.xgraza.xcmd.parser.argument.exception.ArgumentValidateFailureExcept
 
 public class ArgumentString extends Argument<String>
 {
+    public ArgumentString()
+    {
+        this(null);
+    }
+
     public ArgumentString(final String name)
     {
         super(String.class, name);

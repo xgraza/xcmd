@@ -24,8 +24,7 @@ import java.util.regex.Pattern;
 public final class CommandParser
 {
     private static final Pattern PHRASE_REGEX = Pattern.compile("[\"'](.*?)[\"']|(\\S+)");
-    private static final Pattern FLAG_CONDITIONAL_REGEX = Pattern.compile("-([a-zA-Z0-9-_]+)");
-    private static final Pattern FLAG_VALUE_REGEX = Pattern.compile("-([a-zA-Z0-9-_]+)=([\"'](.*?)[\"']|(\\S+))");
+    private static final Pattern FLAG_REGEX = Pattern.compile("-(\\S+)(?:\\s(?:[\"'](.*?)[\"']|(\\S+)))?");
 
     private final ICommandRegistry commandRegistry;
 
@@ -37,17 +36,17 @@ public final class CommandParser
     /**
      * Parses the input
      *
-     * @param raw the raw string input
+     * @param input the input string input
      * @return null or {@link CommandContext}
      */
-    public CommandContext parse(final String raw) throws LexerException,
+    public CommandContext parse(String input) throws LexerException,
             InvalidCommandException,
             ArgumentParseException,
             MissingArgumentException,
             ArgumentValidateFailureException
     {
         // first, put the raw input into "bite" size pieces of information
-        final List<String> rawArguments = splitRawArguments(raw);
+        List<String> rawArguments = splitIntoArguments(input);
         // if there are none parsed, no command was provided
         if (rawArguments.isEmpty())
         {
@@ -68,10 +67,16 @@ public final class CommandParser
         final CommandContext context = new CommandContext(executor, rawArguments);
 
         // we should early on parse flags so theyre not considered normal arguments
-        final List<Flag> flags = executor.getFlags();
+        final List<Flag<?>> flags = executor.getFlags();
         if (!flags.isEmpty())
         {
-            // TODO
+            final List<String> replacementList = parseFlags(rawArguments, flags, context.getResolvedFlagMap());
+            for (final String replacement : replacementList)
+            {
+                input = input.replaceAll(replacement, "");
+            }
+            rawArguments = splitIntoArguments(input);
+            rawArguments.remove(0);
         }
 
         // get list of arguments per the executor
@@ -82,7 +87,7 @@ public final class CommandParser
             return context;
         }
 
-        // "tokenize" each raw argument (ex: "balls" -> "string")
+        // "tokenize" each input argument (ex: "balls" -> "string")
         final List<Token> tokenized = Lexer.tokenize(rawArguments);
 
         // ensure we have the required arguments and the types match
@@ -92,9 +97,73 @@ public final class CommandParser
         // "resolve" is two parts: parse & validate
         // parsing will actually give the object needed (such as turning a string literal "true" to true)
         // validating is an additional step determined by the argument (ex: min/max bounds on a integer)
-        resolveArguments(tokenized, arguments, context.getResolvedArguments());
+        resolveArguments(tokenized, arguments, context.getResolvedArgumentMap());
 
         return context;
+    }
+
+    // TODO: i hate everything about this... FIXME!!!
+    // 1. I hate the for loop checking for the flag object
+    // 2. I hate the rawValue variable
+    // 3. This function is so fucking ugly
+    // 4. I hate that I return a list of things to replace
+    //  a. I hate that I have to re-split the args and pop the first one
+    // I will come up with something better... i promise this is terrible
+    @SuppressWarnings("unchecked")
+    private List<String> parseFlags(final List<String> rawArguments,
+                            final List<Flag<?>> flags,
+                            final Map<String, Object> resolvedFlagMap)
+            throws LexerException, ArgumentParseException, ArgumentValidateFailureException
+    {
+        final List<String> replacementList = new LinkedList<>();
+        final String input = String.join(" ", rawArguments);
+        final Matcher matcher = FLAG_REGEX.matcher(input);
+        while (matcher.find())
+        {
+            final String captured = matcher.group();
+            final String name = matcher.group(1);
+
+            Flag<?> flag = null;
+            for (final Flag<?> f : flags)
+            {
+                if (f.getName().equalsIgnoreCase(name))
+                {
+                    flag = f;
+                    break;
+                }
+            }
+            if (flag == null)
+            {
+                continue;
+            }
+
+            final String rawValue = matcher.group(captured.contains("'") || captured.contains("\"") ? 2 : 3);
+            if (rawValue == null)
+            {
+                if (!flag.isConditional())
+                {
+                    throw new ArgumentParseException("Flag '" + flag.getName() + "' must be followed with a value");
+                }
+                resolvedFlagMap.put(flag.getName(), true);
+            } else
+            {
+                if (flag.isConditional())
+                {
+                    throw new ArgumentParseException("Flag '" + flag.getName() + "' cannot be followed by a value");
+                }
+
+                final Argument<?> argument = flag.getArgument();
+                final Token token = Lexer.tokenize(rawValue);
+                compareTypes(token, argument);
+
+                final Object value = argument.parse(token.getRaw(), token.getType());
+                // hacky, but my pretty generics :(
+                ((Argument<Object>) argument).validate(value);
+                resolvedFlagMap.put(flag.getName(), value);
+            }
+            replacementList.add(captured);
+        }
+        return replacementList;
     }
 
     @SuppressWarnings("unchecked")
@@ -162,16 +231,24 @@ public final class CommandParser
                 throw new MissingArgumentException("Missing " + missingArguments.size()
                         + " argument(s): " + String.join(", ", missingArguments));
             }
-
-            final Token token = tokenized.get(i);
-            if (!token.getType().equals(argument.getTokenType()) && argument.isRequired())
+            if (argument.isRequired())
             {
-                throw new ArgumentParseException("Incorrect type supplied for '"
-                        + argument.getName() + "'! Type "
-                        + token.getType() + "' does not match the expected type '"
-                        + argument.getTokenType() + "'");
+                compareTypes(tokenized.get(i), argument);
             }
         }
+    }
+
+    private void compareTypes(final Token token, final Argument<?> argument)
+            throws ArgumentParseException
+    {
+        if (token.getType().equals(argument.getTokenType()))
+        {
+            return;
+        }
+        throw new ArgumentParseException("Incorrect type supplied for '"
+                + argument.getName() + "'! Type "
+                + token.getType() + "' does not match the expected type '"
+                + argument.getTokenType() + "'");
     }
 
     /**
@@ -179,7 +256,7 @@ public final class CommandParser
      * @param raw the raw input
      * @return a list of strings split to represent an argument
      */
-    private List<String> splitRawArguments(final String raw)
+    private List<String> splitIntoArguments(final String raw)
     {
         final List<String> rawArguments = new LinkedList<>();
         final Matcher matcher = PHRASE_REGEX.matcher(raw

@@ -12,7 +12,12 @@ public final class ArgumentEnum<T> extends Argument<T>
     private final Map<String, T> referenceMap = new HashMap<>();
     private final T[] constants;
 
-    public ArgumentEnum(Class<T> type, String name)
+    public ArgumentEnum(final Class<T> type)
+    {
+        this(type, null);
+    }
+
+    public ArgumentEnum(final Class<T> type, final String name)
     {
         super(type, name);
         if (!type.isEnum())

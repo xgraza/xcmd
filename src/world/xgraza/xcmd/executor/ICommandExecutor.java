@@ -18,7 +18,7 @@ public interface ICommandExecutor
         return Collections.emptyList();
     }
 
-    default List<Flag> getFlags()
+    default List<Flag<?>> getFlags()
     {
         return Collections.emptyList();
     }

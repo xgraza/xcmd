@@ -20,6 +20,7 @@ public final class CommandContext
     private final List<String> rawArguments;
 
     private final Map<String, Object> resolvedArgumentMap = new LinkedHashMap<>();
+    private final Map<String, Object> resolvedFlagMap = new LinkedHashMap<>();
 
     public CommandContext(final ICommandExecutor executor, final List<String> rawArguments)
     {
@@ -58,10 +59,26 @@ public final class CommandContext
         return new CommandResult(executor, code, message);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T getArgument(final String name)
     {
-        return (T) resolvedArgumentMap.get(name);
+        return getArgument(name, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getArgument(final String name, final T defaultValue)
+    {
+        return (T) resolvedArgumentMap.getOrDefault(name, defaultValue);
+    }
+
+    public <T> T getFlag(final String name)
+    {
+        return getFlag(name, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getFlag(final String name, final T defaultValue)
+    {
+        return (T) resolvedFlagMap.getOrDefault(name, defaultValue);
     }
 
     /**
@@ -69,9 +86,19 @@ public final class CommandContext
      * @param name the argument name
      * @return if the argument has been resolved
      */
-    public boolean isArgumentResolved(final String name)
+    public boolean hasArgument(final String name)
     {
         return resolvedArgumentMap.containsKey(name);
+    }
+
+    /**
+     * Checks if a flag has been resolved
+     * @param name the flag name
+     * @return if the flag has been resolved
+     */
+    public boolean hasFlag(final String name)
+    {
+        return resolvedFlagMap.containsKey(name);
     }
 
     public ICommandExecutor getExecutor()
@@ -84,8 +111,13 @@ public final class CommandContext
         return rawArguments;
     }
 
-    public Map<String, Object> getResolvedArguments()
+    public Map<String, Object> getResolvedArgumentMap()
     {
         return resolvedArgumentMap;
+    }
+
+    public Map<String, Object> getResolvedFlagMap()
+    {
+        return resolvedFlagMap;
     }
 }

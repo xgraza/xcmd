@@ -24,28 +24,36 @@ public final class Lexer
      * @return a {@link List<Token>}
      * @throws LexerException if a type could not be inferred
      */
-    public static List<Token> tokenize(final List<String> arguments)
-            throws LexerException
+    public static List<Token> tokenize(final List<String> arguments) throws LexerException
     {
         final List<Token> tokenList = new LinkedList<>();
         for (final String argument : arguments)
         {
-            if (argument.matches(NUMBER_REGEX.pattern()))
+            final Token token = tokenize(argument);
+            if (token != null)
             {
-                tokenList.add(inferNumberType(argument));
-            }
-            else if (argument.matches(BOOLEAN_REGEX.pattern()))
-            {
-                tokenList.add(new Token(argument, "boolean"));
-            }
-            else
-            {
-                // "string" is super general, and should be the default type
-                // for custom argument types
-                tokenList.add(new Token(argument, "string"));
+                tokenList.add(token);
             }
         }
         return tokenList;
+    }
+
+    public static Token tokenize(final String argument) throws LexerException
+    {
+        if (argument.matches(NUMBER_REGEX.pattern()))
+        {
+            return inferNumberType(argument);
+        }
+        else if (argument.matches(BOOLEAN_REGEX.pattern()))
+        {
+            return new Token(argument, "boolean");
+        }
+        else
+        {
+            // "string" is super general, and should be the default type
+            // for custom argument types
+            return new Token(argument, "string");
+        }
     }
 
     // TODO: possibly improve?

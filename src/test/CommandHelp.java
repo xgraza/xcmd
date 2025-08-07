@@ -22,7 +22,7 @@ final class CommandHelp implements ICommandExecutor
     @Override
     public CommandResult dispatch(CommandContext context)
     {
-        if (context.isArgumentResolved("command-name"))
+        if (context.hasArgument("command-name"))
         {
             final ICommandExecutor executor = context.getArgument("command-name");
             return context.ok("Aliases: " + String.join("|", executor.getAliases()));

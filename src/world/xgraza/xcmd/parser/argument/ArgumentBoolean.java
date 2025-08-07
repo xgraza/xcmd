@@ -2,6 +2,11 @@ package world.xgraza.xcmd.parser.argument;
 
 public final class ArgumentBoolean extends Argument<Boolean>
 {
+    public ArgumentBoolean()
+    {
+        this(null);
+    }
+
     public ArgumentBoolean(final String name)
     {
         super(Boolean.class, name);
