@@ -220,7 +220,9 @@ public final class CommandParser
     private void compareTypes(final Token token, final Argument<?> argument)
             throws ArgumentParseException
     {
-        if (token.getType().equals(argument.getTokenType()))
+        // if the argument is a string, you could supply "20" and even though its token is an "integer" it'll still accept it
+        // this should be a configurable behavior incase of an incorrect behavior for a specific use case
+        if (argument.getTokenType().equals("string") || token.getType().equals(argument.getTokenType()))
         {
             return;
         }
