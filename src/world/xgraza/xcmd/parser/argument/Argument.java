@@ -12,7 +12,7 @@ public abstract class Argument<T>
     private final String name;
     private final Class<T> type;
     private final T defaultValue;
-    private boolean required = true, greedy;
+    private boolean required;
 
     /**
      * @apiNote only used for flags, will throw an exception if used otherwise
@@ -32,6 +32,7 @@ public abstract class Argument<T>
         this.type = type;
         this.name = name;
         this.defaultValue = defaultValue;
+        this.required = true;
     }
 
     /**
@@ -92,30 +93,6 @@ public abstract class Argument<T>
     public Argument<T> setRequired(boolean required)
     {
         this.required = required;
-        return this;
-    }
-
-    /**
-     * If this argument is "greedy"
-     * @apiNote "greedy" refers to that this argument will take on the following arguments when parsing to give one big input
-     * @return if this argument is greedy
-     */
-    public boolean isGreedy()
-    {
-        return greedy;
-    }
-
-    public Argument<T> setGreedy(boolean greedy)
-    {
-        if (!getTokenType().equals("string"))
-        {
-            throw new RuntimeException("Only type 'string' can be greedy");
-        }
-        if (isFlag())
-        {
-            throw new RuntimeException("Arguments associated with a flag cannot be greedy");
-        }
-        this.greedy = greedy;
         return this;
     }
 }

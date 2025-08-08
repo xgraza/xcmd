@@ -9,6 +9,8 @@ import world.xgraza.xcmd.parser.argument.exception.ArgumentValidateFailureExcept
  */
 public class ArgumentString extends Argument<String>
 {
+    private boolean greedy = false;
+
     /**
      * @apiNote only used for flags, will throw an exception if used otherwise
      */
@@ -23,9 +25,29 @@ public class ArgumentString extends Argument<String>
     }
 
     @Override
-    public String parse(String raw, String type)
+    public String parse(final String raw, final String type)
     {
         return raw;
+    }
+
+    /**
+     * If this {@link ArgumentString} is "greedy"
+     * @apiNote "greedy" refers to that this argument will take on the following arguments when parsing to give one big input
+     * @return if this {@link ArgumentString} is greedy
+     */
+    public boolean isGreedy()
+    {
+        return greedy;
+    }
+
+    public ArgumentString setGreedy(boolean greedy)
+    {
+        if (isFlag())
+        {
+            throw new RuntimeException("Arguments associated with a flag cannot be greedy");
+        }
+        this.greedy = greedy;
+        return this;
     }
 
     public static ArgumentString string()

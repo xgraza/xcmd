@@ -3,6 +3,7 @@ package world.xgraza.xcmd.parser;
 import world.xgraza.xcmd.parser.argument.Argument;
 import world.xgraza.xcmd.parser.argument.exception.ArgumentParseException;
 import world.xgraza.xcmd.parser.argument.exception.ArgumentValidateFailureException;
+import world.xgraza.xcmd.parser.argument.internal.ArgumentString;
 import world.xgraza.xcmd.parser.exception.MissingArgumentException;
 import world.xgraza.xcmd.parser.flag.Flag;
 import world.xgraza.xcmd.parser.lexer.Lexer;
@@ -186,7 +187,7 @@ public final class CommandParser
                 continue;
             }
 
-            if (argument.isGreedy())
+            if (argument instanceof ArgumentString && ((ArgumentString) argument).isGreedy())
             {
                 final List<Token> restOfTokens = tokenized.subList(i, tokenized.size());
                 final StringJoiner joiner = new StringJoiner(" ");
