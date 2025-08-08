@@ -59,10 +59,11 @@ public class ArgumentNumber<T extends Number> extends Argument<T>
 
     /**
      * Helper method to create a new {@link ArgumentNumber<T>}
+     *
      * @param type the type (extending {@link Number}
      * @param name the name of the argument
+     * @param <T>  a class extending {@link Number}
      * @return the {@link ArgumentNumber<T>} object with the supplied name
-     * @param <T> a class extending {@link Number}
      */
     public static <T extends Number> ArgumentNumber<T> number(final Class<T> type,
                                                               final String name)
@@ -72,12 +73,13 @@ public class ArgumentNumber<T extends Number> extends Argument<T>
 
     /**
      * Helper method to create a new {@link ArgumentNumber<T>} with bounds
+     *
      * @param type the type (extending {@link Number}
      * @param name the name of the argument
-     * @param min the minimum value
-     * @param max the maximum value
+     * @param min  the minimum value
+     * @param max  the maximum value
+     * @param <T>  a class extending {@link Number}
      * @return the {@link ArgumentNumber<T>} object with the supplied name
-     * @param <T> a class extending {@link Number}
      */
     public static <T extends Number> ArgumentNumber<T> number(final Class<T> type,
                                                               final String name,

@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author xgraza
  * @since 08/06/2025
- *
+ * <p>
  * Provides a "context" to the dispatched command
  */
 public final class CommandContext
@@ -30,6 +30,7 @@ public final class CommandContext
 
     /**
      * Resolves the dispatched command successfully
+     *
      * @param message the result (nullable)
      * @return the {@link CommandResult}
      */
@@ -40,6 +41,7 @@ public final class CommandContext
 
     /**
      * Resolves the dispatched command with a fail
+     *
      * @param message the result (nullable)
      * @return the {@link CommandResult}
      */
@@ -50,7 +52,8 @@ public final class CommandContext
 
     /**
      * Resolves the dispatched command
-     * @param code the code
+     *
+     * @param code    the code
      * @param message the result (nullable)
      * @return the {@link CommandResult}
      */
@@ -83,6 +86,7 @@ public final class CommandContext
 
     /**
      * Checks if an argument has been resolved
+     *
      * @param name the argument name
      * @return if the argument has been resolved
      */
@@ -93,6 +97,7 @@ public final class CommandContext
 
     /**
      * Checks if a flag has been resolved
+     *
      * @param name the flag name
      * @return if the flag has been resolved
      */

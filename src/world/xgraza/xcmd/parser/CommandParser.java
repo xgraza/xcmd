@@ -1,5 +1,6 @@
 package world.xgraza.xcmd.parser;
 
+import world.xgraza.xcmd.executor.ICommandExecutor;
 import world.xgraza.xcmd.parser.argument.Argument;
 import world.xgraza.xcmd.parser.argument.exception.ArgumentParseException;
 import world.xgraza.xcmd.parser.argument.exception.ArgumentValidateFailureException;
@@ -8,12 +9,14 @@ import world.xgraza.xcmd.parser.exception.MissingArgumentException;
 import world.xgraza.xcmd.parser.flag.Flag;
 import world.xgraza.xcmd.parser.lexer.Lexer;
 import world.xgraza.xcmd.parser.lexer.Token;
-import world.xgraza.xcmd.executor.ICommandExecutor;
 import world.xgraza.xcmd.parser.lexer.exception.LexerException;
 import world.xgraza.xcmd.registry.ICommandRegistry;
 import world.xgraza.xcmd.registry.exception.InvalidCommandException;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -225,6 +228,7 @@ public final class CommandParser
 
     /**
      * Splits raw input into a list of arguments (supports "quoting of arguments")
+     *
      * @param raw the raw input
      * @return a list of strings split to represent an argument
      */
@@ -247,8 +251,9 @@ public final class CommandParser
 
     /**
      * Finds the first group from a matcher that is not null nor empty (my regular expressions suck...)
+     *
      * @param matcher the {@link Matcher} object for the char sequence
-     * @param start the first group to search from
+     * @param start   the first group to search from
      * @return the first non-null & non-empty string, or null if none found
      */
     private String findFirstGroup(final Matcher matcher, final int start)

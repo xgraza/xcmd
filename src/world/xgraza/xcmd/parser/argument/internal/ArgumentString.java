@@ -32,8 +32,9 @@ public class ArgumentString extends Argument<String>
 
     /**
      * If this {@link ArgumentString} is "greedy"
-     * @apiNote "greedy" refers to that this argument will take on the following arguments when parsing to give one big input
+     *
      * @return if this {@link ArgumentString} is greedy
+     * @apiNote "greedy" refers to that this argument will take on the following arguments when parsing to give one big input
      */
     public boolean isGreedy()
     {

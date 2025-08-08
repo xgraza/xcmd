@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * @author xgraza
  * @since 08/06/2025
- *
+ * <p>
  * Turns raw arguments into tokens for further processing
  */
 public final class Lexer
@@ -20,6 +20,7 @@ public final class Lexer
 
     /**
      * Tokenizes each argument
+     *
      * @param arguments a {@link List<String>} of raw arguments
      * @return a {@link List<Token>}
      * @throws LexerException if a type could not be inferred
@@ -39,12 +40,10 @@ public final class Lexer
         if (argument.matches(NUMBER_REGEX.pattern()))
         {
             return inferNumberType(argument);
-        }
-        else if (argument.matches(BOOLEAN_REGEX.pattern()))
+        } else if (argument.matches(BOOLEAN_REGEX.pattern()))
         {
             return new Token(argument, "boolean");
-        }
-        else
+        } else
         {
             // "string" is super general, and should be the default type
             // for custom argument types

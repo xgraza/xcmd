@@ -43,8 +43,9 @@ public final class ArgumentBoolean extends Argument<Boolean>
 
     /**
      * Helper method to create an {@link ArgumentBoolean}
-     * @apiNote only used for flags, will throw an exception if used otherwise
+     *
      * @return an {@link ArgumentBoolean} with no name (flag only)
+     * @apiNote only used for flags, will throw an exception if used otherwise
      */
     public static ArgumentBoolean bool()
     {
@@ -53,6 +54,7 @@ public final class ArgumentBoolean extends Argument<Boolean>
 
     /**
      * Helper method to create an {@link ArgumentBoolean}
+     *
      * @param name the name for this {@link ArgumentBoolean}
      * @return an {@link ArgumentBoolean} with the supplied name
      */

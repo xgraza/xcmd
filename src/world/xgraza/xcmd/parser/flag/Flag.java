@@ -5,7 +5,7 @@ import world.xgraza.xcmd.parser.argument.Argument;
 /**
  * @author xgraza
  * @since 08/06/2025
- *
+ * <p>
  * Represents a flag for additional functionality
  */
 public final class Flag<T>
@@ -40,6 +40,7 @@ public final class Flag<T>
 
     /**
      * If the flag is "conditional" (aka if present = true)
+     *
      * @return if the argument is conditional
      */
     public boolean isConditional()

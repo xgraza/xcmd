@@ -37,7 +37,8 @@ public abstract class Argument<T>
 
     /**
      * Parses raw input into an actual object
-     * @param raw the raw argument
+     *
+     * @param raw  the raw argument
      * @param type the type the lexer inferred from the raw argument
      * @return {@link T} or null
      * @throws ArgumentParseException if an invalid raw argument is passed
@@ -46,9 +47,10 @@ public abstract class Argument<T>
 
     /**
      * Validates a value based on a condition
+     *
      * @param value the parsed value
-     * @apiNote Defaults to an empty method, override to add functionality
      * @throws ArgumentValidateFailureException if validation fails
+     * @apiNote Defaults to an empty method, override to add functionality
      */
     public void validate(final T value) throws ArgumentValidateFailureException
     {
@@ -77,8 +79,9 @@ public abstract class Argument<T>
 
     /**
      * The token type
-     * @apiNote should only be the primitive type (ex: integer, double, boolean, string)
+     *
      * @return the token type of this argument
+     * @apiNote should only be the primitive type (ex: integer, double, boolean, string)
      */
     public String getTokenType()
     {

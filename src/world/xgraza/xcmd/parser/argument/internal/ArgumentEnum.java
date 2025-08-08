@@ -49,7 +49,7 @@ public final class ArgumentEnum<T> extends Argument<T>
         if (value == null)
         {
             throw new ArgumentParseException("Unrecognized option '" + raw + "', Options are: "
-                + Arrays.stream(constants).map(Object::toString)
+                    + Arrays.stream(constants).map(Object::toString)
                     .collect(Collectors.joining(", ")));
         }
         return value;

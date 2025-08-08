@@ -40,8 +40,9 @@ public final class ArgumentCommand extends Argument<ICommandExecutor>
 
     /**
      * Helper method to create an {@link ArgumentCommand}
-     * @apiNote only used for flags, will throw an exception if used otherwise
+     *
      * @return an {@link ArgumentCommand} with no name (flag only)
+     * @apiNote only used for flags, will throw an exception if used otherwise
      */
     public static ArgumentCommand command(final ICommandRegistry registry)
     {
@@ -50,6 +51,7 @@ public final class ArgumentCommand extends Argument<ICommandExecutor>
 
     /**
      * Helper method to create an {@link ArgumentCommand}
+     *
      * @param name the name for this {@link ArgumentCommand}
      * @return an {@link ArgumentCommand} with the supplied name
      */

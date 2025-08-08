@@ -1,9 +1,9 @@
 package world.xgraza.xcmd.registry;
 
-import world.xgraza.xcmd.parser.CommandContext;
-import world.xgraza.xcmd.parser.CommandParser;
 import world.xgraza.xcmd.executor.CommandResult;
 import world.xgraza.xcmd.executor.ICommandExecutor;
+import world.xgraza.xcmd.parser.CommandContext;
+import world.xgraza.xcmd.parser.CommandParser;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -62,7 +62,8 @@ public abstract class CommandRegistry implements ICommandRegistry
             start = System.nanoTime();
             context = commandParser.parse(input);
             end = System.nanoTime();
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             handleDispatchException(e);
             return;

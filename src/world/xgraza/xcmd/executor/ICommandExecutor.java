@@ -1,7 +1,7 @@
 package world.xgraza.xcmd.executor;
 
-import world.xgraza.xcmd.parser.argument.Argument;
 import world.xgraza.xcmd.parser.CommandContext;
+import world.xgraza.xcmd.parser.argument.Argument;
 import world.xgraza.xcmd.parser.flag.Flag;
 
 import java.util.Collections;
@@ -15,6 +15,7 @@ public interface ICommandExecutor
 {
     /**
      * Dispatches this {@link ICommandExecutor}
+     *
      * @param context the {@link CommandContext} provided from the parser
      * @return the result of this {@link ICommandExecutor} dispatch
      */
@@ -43,8 +44,9 @@ public interface ICommandExecutor
 
     /**
      * Suggests possible responses to an {@link Argument<?>} based on the raw input
+     *
      * @param argument the {@link Argument<?>}
-     * @param input the raw string input
+     * @param input    the raw string input
      * @return a list of Strings of possible responses
      */
     default List<String> suggest(final Argument<?> argument, final String input)
