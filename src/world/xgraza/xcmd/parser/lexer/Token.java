@@ -10,7 +10,7 @@ public final class Token
 {
     private final String raw, type;
 
-    public Token(String raw, String type)
+    Token(String raw, String type)
     {
         this.raw = raw;
         this.type = type;

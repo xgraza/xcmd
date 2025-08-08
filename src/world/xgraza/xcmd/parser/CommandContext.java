@@ -22,7 +22,7 @@ public final class CommandContext
     private final Map<String, Object> resolvedArgumentMap = new LinkedHashMap<>();
     private final Map<String, Object> resolvedFlagMap = new LinkedHashMap<>();
 
-    public CommandContext(final ICommandExecutor executor, final List<String> rawArguments)
+    CommandContext(final ICommandExecutor executor, final List<String> rawArguments)
     {
         this.executor = executor;
         this.rawArguments = rawArguments;
