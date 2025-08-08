@@ -4,8 +4,8 @@ import world.xgraza.xcmd.executor.CommandResult;
 import world.xgraza.xcmd.executor.ICommandExecutor;
 import world.xgraza.xcmd.parser.CommandContext;
 import world.xgraza.xcmd.parser.argument.Argument;
-import world.xgraza.xcmd.parser.argument.ArgumentNumber;
-import world.xgraza.xcmd.parser.argument.ArgumentString;
+import world.xgraza.xcmd.parser.argument.internal.ArgumentNumber;
+import world.xgraza.xcmd.parser.argument.internal.ArgumentString;
 import world.xgraza.xcmd.parser.flag.Flag;
 
 import java.util.Collections;

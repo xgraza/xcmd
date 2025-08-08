@@ -3,6 +3,10 @@ package world.xgraza.xcmd.parser.argument;
 import world.xgraza.xcmd.parser.argument.exception.ArgumentParseException;
 import world.xgraza.xcmd.parser.argument.exception.ArgumentValidateFailureException;
 
+/**
+ * @author xgraza
+ * @since 08/06/2025
+ */
 public abstract class Argument<T>
 {
     private final String name;
@@ -10,6 +14,9 @@ public abstract class Argument<T>
     private final T defaultValue;
     private boolean required = true, greedy;
 
+    /**
+     * @apiNote only used for flags, will throw an exception if used otherwise
+     */
     public Argument(final Class<T> type)
     {
         this(type, null, null);
@@ -27,8 +34,21 @@ public abstract class Argument<T>
         this.defaultValue = defaultValue;
     }
 
+    /**
+     * Parses raw input into an actual object
+     * @param raw the raw argument
+     * @param type the type the lexer inferred from the raw argument
+     * @return {@link T} or null
+     * @throws ArgumentParseException if an invalid raw argument is passed
+     */
     public abstract T parse(final String raw, final String type) throws ArgumentParseException;
 
+    /**
+     * Validates a value based on a condition
+     * @param value the parsed value
+     * @apiNote Defaults to an empty method, override to add functionality
+     * @throws ArgumentValidateFailureException if validation fails
+     */
     public void validate(final T value) throws ArgumentValidateFailureException
     {
         // no-op
@@ -54,6 +74,11 @@ public abstract class Argument<T>
         return defaultValue;
     }
 
+    /**
+     * The token type
+     * @apiNote should only be the primitive type (ex: integer, double, boolean, string)
+     * @return the token type of this argument
+     */
     public String getTokenType()
     {
         return "string";
@@ -70,6 +95,11 @@ public abstract class Argument<T>
         return this;
     }
 
+    /**
+     * If this argument is "greedy"
+     * @apiNote "greedy" refers to that this argument will take on the following arguments when parsing to give one big input
+     * @return if this argument is greedy
+     */
     public boolean isGreedy()
     {
         return greedy;

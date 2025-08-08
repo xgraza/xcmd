@@ -1,9 +1,17 @@
-package world.xgraza.xcmd.parser.argument;
+package world.xgraza.xcmd.parser.argument.internal;
 
+import world.xgraza.xcmd.parser.argument.Argument;
 import world.xgraza.xcmd.parser.argument.exception.ArgumentValidateFailureException;
 
+/**
+ * @author xgraza
+ * @since 08/06/2025
+ */
 public class ArgumentNumber<T extends Number> extends Argument<T>
 {
+    /**
+     * @apiNote only used for flags, will throw an exception if used otherwise
+     */
     public ArgumentNumber(final Class<T> type)
     {
         this(type, null);
@@ -49,17 +57,37 @@ public class ArgumentNumber<T extends Number> extends Argument<T>
         return getType().getSimpleName().toLowerCase();
     }
 
+    /**
+     * Helper method to create a new {@link ArgumentNumber<T>}
+     * @param type the type (extending {@link Number}
+     * @param name the name of the argument
+     * @return the {@link ArgumentNumber<T>} object with the supplied name
+     * @param <T> a class extending {@link Number}
+     */
     public static <T extends Number> ArgumentNumber<T> number(final Class<T> type,
                                                               final String name)
     {
         return new ArgumentNumber<>(type, name);
     }
 
+    /**
+     * Helper method to create a new {@link ArgumentNumber<T>} with bounds
+     * @param type the type (extending {@link Number}
+     * @param name the name of the argument
+     * @param min the minimum value
+     * @param max the maximum value
+     * @return the {@link ArgumentNumber<T>} object with the supplied name
+     * @param <T> a class extending {@link Number}
+     */
     public static <T extends Number> ArgumentNumber<T> number(final Class<T> type,
                                                               final String name,
                                                               final T min,
                                                               final T max)
     {
+        if (min.doubleValue() > max.doubleValue())
+        {
+            throw new RuntimeException("min cannot be greater than max");
+        }
         return new ArgumentNumber<T>(type, name)
         {
             @Override

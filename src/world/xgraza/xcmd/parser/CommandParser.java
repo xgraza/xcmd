@@ -219,17 +219,16 @@ public final class CommandParser
                 {
                     break;
                 }
-                final List<String> missingArguments = new LinkedList<>();
+                final List<Argument<?>> missingArguments = new LinkedList<>();
                 for (int j = i; j < arguments.size(); ++j)
                 {
                     final Argument<?> arg = arguments.get(j);
-                    if (arg.isRequired())
+                    if (!arg.isRequired())
                     {
-                        missingArguments.add(arg.getName() + "(" + arg.getTokenType() + ")");
+                        missingArguments.add(arg);
                     }
                 }
-                throw new MissingArgumentException("Missing " + missingArguments.size()
-                        + " argument(s): " + String.join(", ", missingArguments));
+                throw new MissingArgumentException(missingArguments);
             }
             if (argument.isRequired())
             {

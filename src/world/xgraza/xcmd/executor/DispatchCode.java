@@ -1,5 +1,9 @@
 package world.xgraza.xcmd.executor;
 
+/**
+ * @author xgraza
+ * @since 08/06/2025
+ */
 public interface DispatchCode
 {
     int ERROR = -1;

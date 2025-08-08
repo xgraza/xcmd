@@ -1,9 +1,17 @@
-package world.xgraza.xcmd.parser.argument;
+package world.xgraza.xcmd.parser.argument.internal;
 
+import world.xgraza.xcmd.parser.argument.Argument;
 import world.xgraza.xcmd.parser.argument.exception.ArgumentValidateFailureException;
 
+/**
+ * @author xgraza
+ * @since 08/06/2025
+ */
 public class ArgumentString extends Argument<String>
 {
+    /**
+     * @apiNote only used for flags, will throw an exception if used otherwise
+     */
     public ArgumentString()
     {
         this(null);
@@ -18,6 +26,16 @@ public class ArgumentString extends Argument<String>
     public String parse(String raw, String type)
     {
         return raw;
+    }
+
+    public static ArgumentString string()
+    {
+        return new ArgumentString();
+    }
+
+    public static ArgumentString string(final String name)
+    {
+        return string(name, false);
     }
 
     public static ArgumentString string(final String name, final boolean greedy)

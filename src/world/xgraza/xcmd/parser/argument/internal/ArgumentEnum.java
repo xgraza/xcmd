@@ -1,5 +1,6 @@
-package world.xgraza.xcmd.parser.argument;
+package world.xgraza.xcmd.parser.argument.internal;
 
+import world.xgraza.xcmd.parser.argument.Argument;
 import world.xgraza.xcmd.parser.argument.exception.ArgumentParseException;
 
 import java.util.Arrays;
@@ -7,11 +8,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * @author xgraza
+ * @since 08/06/2025
+ */
 public final class ArgumentEnum<T> extends Argument<T>
 {
     private final Map<String, T> referenceMap = new HashMap<>();
     private final T[] constants;
 
+    /**
+     * @apiNote only used for flags, will throw an exception if used otherwise
+     */
     public ArgumentEnum(final Class<T> type)
     {
         this(type, null);
