@@ -21,15 +21,10 @@ final class CommandRockPaperScissors implements ICommandExecutor
         {
             return context.ok("We both picked " + botMove.name() + "! We tied");
         }
-
-        final boolean win = botMove.getOutcomes()[playerMove.ordinal()];
-        if (win)
-        {
-            return context.ok(botMove + " beats " + playerMove + ", I win!");
-        } else
-        {
-            return context.ok(botMove + " looses to " + playerMove + ", I loose!");
-        }
+        return context.ok("I picked " +
+                botMove +
+                ", " +
+                (botMove.getOutcomes()[playerMove.ordinal()] ? "I win!" : "you win!"));
     }
 
     private Move pickRandomMove()
@@ -61,7 +56,7 @@ final class CommandRockPaperScissors implements ICommandExecutor
 
     private enum Move
     {
-        ROCK(false, true, true), // 0
+        ROCK(false, false, true), // 0
         PAPER(true, false, false), // 1
         SCISSORS(false, true, false); // 2
 

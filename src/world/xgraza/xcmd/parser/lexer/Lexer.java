@@ -29,16 +29,12 @@ public final class Lexer
         final List<Token> tokenList = new LinkedList<>();
         for (final String argument : arguments)
         {
-            final Token token = tokenize(argument);
-            if (token != null)
-            {
-                tokenList.add(token);
-            }
+            tokenList.add(tokenizeSingle(argument));
         }
         return tokenList;
     }
 
-    public static Token tokenize(final String argument) throws LexerException
+    public static Token tokenizeSingle(final String argument) throws LexerException
     {
         if (argument.matches(NUMBER_REGEX.pattern()))
         {

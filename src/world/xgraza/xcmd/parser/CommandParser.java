@@ -40,15 +40,13 @@ public final class CommandParser
      * @param input the input string input
      * @return null or {@link CommandContext}
      */
-    public CommandContext parse(String input) throws LexerException,
+    public CommandContext parse(final String input) throws LexerException,
             InvalidCommandException,
             ArgumentParseException,
             MissingArgumentException,
             ArgumentValidateFailureException
     {
-        // first, put the raw input into "bite" size pieces of information
-        List<String> rawArguments = splitIntoArguments(input);
-        // if there are none parsed, no command was provided
+        final List<String> rawArguments = splitIntoArguments(input);
         if (rawArguments.isEmpty())
         {
             return null;
@@ -67,22 +65,14 @@ public final class CommandParser
         // create the command context - this holds arguments, flags, and the executor
         final CommandContext context = new CommandContext(executor, rawArguments);
 
-        // we should early on parse flags so theyre not considered normal arguments
+        // we should early on parse flags so theyre not mixed with arguments
         final List<Flag<?>> flags = executor.getFlags();
         if (!flags.isEmpty())
         {
-            final List<String> replacementList = parseFlags(rawArguments, flags, context.getResolvedFlagMap());
-            for (final String replacement : replacementList)
-            {
-                input = input.replaceAll(replacement, "");
-            }
-            rawArguments = splitIntoArguments(input);
-            rawArguments.remove(0);
+            parseFlags(input, rawArguments, flags, context.getResolvedFlagMap());
         }
 
-        // get list of arguments per the executor
         final List<Argument<?>> arguments = executor.getArguments();
-        // if no arguments are present, resolve early
         if (arguments.isEmpty())
         {
             return context;
@@ -103,68 +93,57 @@ public final class CommandParser
         return context;
     }
 
-    // TODO: i hate everything about this... FIXME!!!
-    // 1. I hate the for loop checking for the flag object
-    // 2. I hate the rawValue variable
-    // 3. This function is so fucking ugly
-    // 4. I hate that I return a list of things to replace
-    //  a. I hate that I have to re-split the args and pop the first one
-    // I will come up with something better... i promise this is terrible
     @SuppressWarnings("unchecked")
-    private List<String> parseFlags(final List<String> rawArguments,
+    private void parseFlags(final String raw,
+                            final List<String> rawArguments,
                             final List<Flag<?>> flags,
                             final Map<String, Object> resolvedFlagMap)
             throws LexerException, ArgumentParseException, ArgumentValidateFailureException
     {
-        final List<String> replacementList = new LinkedList<>();
-        final String input = String.join(" ", rawArguments);
-        final Matcher matcher = FLAG_REGEX.matcher(input);
+        final Matcher matcher = FLAG_REGEX.matcher(raw);
         while (matcher.find())
         {
-            final String captured = matcher.group();
             final String name = matcher.group(1);
-
             Flag<?> flag = null;
-            for (final Flag<?> f : flags)
             {
-                if (f.getName().equalsIgnoreCase(name))
+                for (final Flag<?> next : flags)
                 {
-                    flag = f;
-                    break;
+                    if (next.getName().equalsIgnoreCase(name))
+                    {
+                        flag = next;
+                        break;
+                    }
                 }
             }
             if (flag == null)
             {
                 continue;
             }
+            rawArguments.remove("-" + name);
 
-            final String rawValue = matcher.group(captured.contains("'") || captured.contains("\"") ? 2 : 3);
-            if (rawValue == null)
+            if (flag.isConditional())
             {
-                if (!flag.isConditional())
-                {
-                    throw new ArgumentParseException("Flag '" + flag.getName() + "' must be followed with a value");
-                }
                 resolvedFlagMap.put(flag.getName(), true);
-            } else
-            {
-                if (flag.isConditional())
-                {
-                    throw new ArgumentParseException("Flag '" + flag.getName() + "' cannot be followed by a value");
-                }
-
-                final Argument<?> argument = flag.getArgument();
-                final Token token = Lexer.tokenize(rawValue);
-                compareTypes(token, argument);
-
-                final Object value = argument.parse(token.getRaw(), token.getType());
-                // hacky, but my pretty generics :(
-                ((Argument<Object>) argument).validate(value);
-                resolvedFlagMap.put(flag.getName(), value);
+                continue;
             }
-            replacementList.add(captured);
+
+            final String input = findFirstGroup(matcher, 2);
+            if (input == null)
+            {
+                throw new ArgumentParseException("Flag '" + flag.getName() + "' must be followed with a value");
+            }
+
+            rawArguments.remove(input);
+
+            final Argument<?> argument = flag.getArgument();
+            final Token token = Lexer.tokenizeSingle(input);
+            compareTypes(token, argument);
+
+            final Object value = argument.parse(token.getRaw(), token.getType());
+            // hacky, but my pretty generics :(
+            ((Argument<Object>) argument).validate(value);
+            resolvedFlagMap.put(flag.getName(), value);
         }
-        return replacementList;
     }
 
     @SuppressWarnings("unchecked")
@@ -264,16 +243,33 @@ public final class CommandParser
                 .trim());
         while (matcher.find())
         {
-            String value = matcher.group(1);
-            if (value == null)
-            {
-                value = matcher.group(0);
-            }
-            if (!value.isEmpty())
+            final String value = findFirstGroup(matcher, 1);
+            if (value != null)
             {
                 rawArguments.add(value);
             }
         }
         return rawArguments;
+    }
+
+    /**
+     * Finds the first group from a matcher that is not null nor empty (my regular expressions suck...)
+     * @param matcher the {@link Matcher} object for the char sequence
+     * @param start the first group to search from
+     * @return the first non-null & non-empty string, or null if none found
+     */
+    private String findFirstGroup(final Matcher matcher, final int start)
+    {
+        int index = start;
+        while (index <= matcher.groupCount())
+        {
+            final String value = matcher.group(index);
+            if (value != null && !value.isEmpty())
+            {
+                return value;
+            }
+            ++index;
+        }
+        return null;
     }
 }

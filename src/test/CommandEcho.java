@@ -21,7 +21,7 @@ final class CommandEcho implements ICommandExecutor
     public List<Argument<?>> getArguments()
     {
         final List<Argument<?>> arguments = new LinkedList<>();
-        arguments.add(ArgumentString.string("input", true));
+        arguments.add(ArgumentString.greedy("input"));
         return arguments;
     }
 

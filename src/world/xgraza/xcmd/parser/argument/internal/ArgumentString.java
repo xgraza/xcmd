@@ -55,15 +55,19 @@ public class ArgumentString extends Argument<String>
         return new ArgumentString();
     }
 
-    public static ArgumentString string(final String name)
+    public static ArgumentString greedy()
     {
-        return string(name, false);
+        return new ArgumentString().setGreedy(true);
     }
 
-    public static ArgumentString string(final String name, final boolean greedy)
+    public static ArgumentString string(final String name)
     {
-        return (ArgumentString) new ArgumentString(name)
-                .setGreedy(greedy);
+        return new ArgumentString(name);
+    }
+
+    public static ArgumentString greedy(final String name)
+    {
+        return new ArgumentString(name).setGreedy(true);
     }
 
     public static ArgumentString string(final String name, final String pattern)
@@ -86,7 +90,7 @@ public class ArgumentString extends Argument<String>
                                         final int maxLength,
                                         final boolean greedy)
     {
-        return (ArgumentString) new ArgumentString(name)
+        return new ArgumentString(name)
         {
             @Override
             public void validate(final String value) throws ArgumentValidateFailureException

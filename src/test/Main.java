@@ -9,6 +9,7 @@ final class Main
     public static void main(String[] args)
     {
         REGISTRY.register(new CommandEcho());
+        REGISTRY.register(new CommandFlagTest());
         REGISTRY.register(new CommandHelp(REGISTRY));
         REGISTRY.register(new CommandRockPaperScissors());
         REGISTRY.register(new CommandScramble());
