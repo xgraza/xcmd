@@ -52,17 +52,13 @@ public final class CommandParser
             return null;
         }
 
-        // pop the first element to grab the command name
         final String commandName = rawArguments.remove(0);
-
-        // get executor from the provided command registry
         final ICommandExecutor executor = commandRegistry.getExecutor(commandName);
         if (executor == null)
         {
             throw new InvalidCommandException(commandName);
         }
 
-        // create the command context - this holds arguments, flags, and the executor
         final CommandContext context = new CommandContext(executor, rawArguments);
 
         // we should early on parse flags so theyre not mixed with arguments
@@ -77,19 +73,14 @@ public final class CommandParser
         {
             return context;
         }
-
-        // "tokenize" each input argument (ex: "balls" -> "string")
         final List<Token> tokenized = Lexer.tokenize(rawArguments);
 
-        // ensure we have the required arguments and the types match
+        // validate arguments with their internal validation, ensure strict types
         validateArguments(tokenized, arguments);
-
-        // resolve the arguments
-        // "resolve" is two parts: parse & validate
-        // parsing will actually give the object needed (such as turning a string literal "true" to true)
-        // validating is an additional step determined by the argument (ex: min/max bounds on a integer)
+        // finally supply our command context with our argument resolutions
         resolveArguments(tokenized, arguments, context.getResolvedArgumentMap());
 
+        // finally give context over
         return context;
     }
 
@@ -168,12 +159,12 @@ public final class CommandParser
 
             if (argument instanceof ArgumentString && ((ArgumentString) argument).isGreedy())
             {
-                final List<Token> restOfTokens = tokenized.subList(i, tokenized.size());
+                final List<Token> remainingTokens = tokenized.subList(i, tokenized.size());
                 final StringJoiner joiner = new StringJoiner(" ");
                 // this is the type of greed foretold in the bible
-                for (final Token t : restOfTokens)
+                for (final Token remainingToken : remainingTokens)
                 {
-                    joiner.add(t.getRaw());
+                    joiner.add(remainingToken.getRaw());
                 }
                 resolvedArgumentMap.put(argument.getName(), joiner.toString());
                 return;
