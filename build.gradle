@@ -1,0 +1,6 @@
+plugins {
+    id 'java'
+}
+
+group 'world.xgraza.xcmd'
+version '1.0'

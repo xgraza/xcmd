@@ -1,8 +1,9 @@
 ### IntelliJ IDEA ###
+xcmd.iml
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-.idea
+.idea/
 
 ### Eclipse ###
 .apt_generated
@@ -29,4 +30,6 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-xcmd.iml
+### Gradle ###
+.gradle/
+build/

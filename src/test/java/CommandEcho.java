@@ -1,5 +1,3 @@
-package test;
-
 import world.xgraza.xcmd.executor.CommandResult;
 import world.xgraza.xcmd.executor.ICommandExecutor;
 import world.xgraza.xcmd.parser.CommandContext;
