@@ -128,7 +128,9 @@ public final class CommandParser
             final String input = findFirstGroup(matcher, 2);
             if (input == null)
             {
-                throw new ArgumentParseException("Flag '" + flag.getName() + "' must be followed with a value");
+                throw new ArgumentParseException("Flag '"
+                        + flag.getName()
+                        + "' must be followed with a value");
             }
 
             rawArguments.remove(input);
@@ -220,7 +222,8 @@ public final class CommandParser
     {
         // if the argument is a string, you could supply "20" and even though its token is an "integer" it'll still accept it
         // this should be a configurable behavior incase of an incorrect behavior for a specific use case
-        if (argument.getTokenType().equals("string") || token.getType().equals(argument.getTokenType()))
+        if (argument.getTokenType().equals("string")
+                || token.getType().equals(argument.getTokenType()))
         {
             return;
         }
