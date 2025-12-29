@@ -1,6 +1,41 @@
+/*
+ * Copyright (c) xgraza 2025
+ */
+
 plugins {
     id 'java'
+    id 'com.github.gmazzo.buildconfig' version "$build_config_version"
 }
 
-group 'world.xgraza.xcmd'
-version '1.0'
+group = project.group
+version = project.version
+
+var buildNumber = project.build_number
+var gitHash = execute("git rev-parse --short HEAD")
+var gitBranch = execute("git branch --show-current")
+
+buildConfig {
+    buildConfigField(String, "HASH", gitHash)
+    buildConfigField(String, "BRANCH", gitBranch)
+    buildConfigField(String, "VERSION", project.version)
+    buildConfigField(String, "BUILD", buildNumber)
+    buildConfigField(String, "BUILD_TIME", "${new Date(System.currentTimeMillis()).format("MM/dd/yyyy HH:mm")}")
+
+    packageName "us.xgraza.xcmd"
+    useJavaOutput()
+    generateAtSync = true
+}
+
+sourceSets.main.java.srcDirs += "build/gen/buildconfig/src/main"
+
+tasks.withType(JavaCompile).configureEach {
+    dependsOn(generateBuildConfig)
+}
+
+static def execute(final String cmd) {
+    try {
+        return cmd.execute().text.trim()
+    } catch (ignored) {
+        return null
+    }
+}

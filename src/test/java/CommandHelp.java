@@ -1,8 +1,8 @@
-import world.xgraza.xcmd.executor.CommandResult;
-import world.xgraza.xcmd.executor.ICommandExecutor;
-import world.xgraza.xcmd.parser.CommandContext;
-import world.xgraza.xcmd.parser.argument.Argument;
-import world.xgraza.xcmd.parser.argument.internal.ArgumentCommand;
+import us.xgraza.xcmd.executor.CommandResult;
+import us.xgraza.xcmd.executor.ICommandExecutor;
+import us.xgraza.xcmd.parser.CommandContext;
+import us.xgraza.xcmd.parser.argument.Argument;
+import us.xgraza.xcmd.parser.argument.internal.ArgumentCommand;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -69,6 +69,6 @@ final class CommandHelp implements ICommandExecutor
     @Override
     public String[] getAliases()
     {
-        return new String[] { "help", "cmds", "commands" };
+        return new String[]{ "help", "cmds", "commands" };
     }
 }
