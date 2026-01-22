@@ -1,5 +1,5 @@
 /*
- * Copyright (c) xgraza 2025
+ * Copyright (c) xgraza 2026
  */
 
 package us.xgraza.xcmd.parser;
@@ -36,22 +36,24 @@ public final class CommandContext
      * Resolves the dispatched command successfully
      *
      * @param message the result (nullable)
+     * @param format  the format
      * @return the {@link CommandResult}
      */
-    public CommandResult ok(final String message)
+    public CommandResult ok(final String message, final String... format)
     {
-        return resolve(DispatchCode.OK, message);
+        return resolve(DispatchCode.OK, message, format);
     }
 
     /**
      * Resolves the dispatched command with a fail
      *
      * @param message the result (nullable)
+     * @param format  the forma
      * @return the {@link CommandResult}
      */
-    public CommandResult fail(final String message)
+    public CommandResult fail(final String message, final String... format)
     {
-        return resolve(DispatchCode.FAIL, message);
+        return resolve(DispatchCode.FAIL, message, format);
     }
 
     /**
@@ -59,11 +61,12 @@ public final class CommandContext
      *
      * @param code    the code
      * @param message the result (nullable)
+     * @param format  the format
      * @return the {@link CommandResult}
      */
-    public CommandResult resolve(final int code, final String message)
+    public CommandResult resolve(final int code, final String message, final String... format)
     {
-        return new CommandResult(executor, code, message);
+        return new CommandResult(executor, code, String.format(message, format));
     }
 
     public <T> T getArgument(final String name)
