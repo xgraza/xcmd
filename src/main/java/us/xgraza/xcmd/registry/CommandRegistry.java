@@ -58,31 +58,14 @@ public abstract class CommandRegistry implements ICommandRegistry
      */
     public void process(final String input)
     {
-        long start, end;
-
-        CommandContext context;
         try
         {
-            start = System.nanoTime();
-            context = commandParser.parse(input);
-            end = System.nanoTime();
-        } catch (Exception e)
-        {
-            handleDispatchException(e);
-            return;
-        }
-        final double parseTimeMS = (end - start) / 1E+6;
-        if (context == null || context.getExecutor() == null)
-        {
-            return;
-        }
-        try
-        {
-            start = System.nanoTime();
-            final CommandResult result = context.getExecutor().dispatch(context);
-            end = System.nanoTime();
-            handleDispatchResult(result, context);
-            handleExecutorDebug(context, parseTimeMS, (end - start) / 1E+6);
+            final CommandContext context = commandParser.parse(input);
+            if (context == null || context.getExecutor() == null)
+            {
+                return;
+            }
+            handleDispatchResult(context.getExecutor().dispatch(context), context);
         } catch (final Exception e)
         {
             handleDispatchException(e);
@@ -93,13 +76,6 @@ public abstract class CommandRegistry implements ICommandRegistry
                                               final CommandContext context);
 
     public abstract void handleDispatchException(final Exception exception);
-
-    public void handleExecutorDebug(final CommandContext context,
-                                    final double parseTimeMS,
-                                    final double dispatchTimeMS)
-    {
-        // no-op
-    }
 
     @Override
     @SuppressWarnings("unchecked")
