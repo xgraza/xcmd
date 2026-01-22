@@ -1,5 +1,5 @@
 /*
- * Copyright (c) xgraza 2025
+ * Copyright (c) xgraza 2026
  */
 
 package us.xgraza.xcmd.executor;
@@ -9,6 +9,7 @@ import us.xgraza.xcmd.parser.argument.Argument;
 import us.xgraza.xcmd.parser.flag.Flag;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public interface ICommandExecutor
      */
     default List<Argument<?>> getArguments()
     {
-        return Collections.emptyList();
+        return new LinkedList<>();
     }
 
     /**
@@ -43,7 +44,7 @@ public interface ICommandExecutor
      */
     default List<Flag<?>> getFlags()
     {
-        return Collections.emptyList();
+        return new LinkedList<>();
     }
 
     /**
