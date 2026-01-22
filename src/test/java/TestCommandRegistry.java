@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) xgraza 2026
+ */
+
 import us.xgraza.xcmd.executor.CommandResult;
 import us.xgraza.xcmd.executor.DispatchCode;
 import us.xgraza.xcmd.parser.CommandContext;
@@ -41,11 +45,5 @@ final class TestCommandRegistry extends CommandRegistry
     public void handleDispatchException(final Exception exception)
     {
         System.out.println("Exception: " + exception.getMessage());
-    }
-
-    @Override
-    public void handleExecutorDebug(CommandContext context, double parseTimeMS, double dispatchTimeMS)
-    {
-        System.out.println("\033[3;8mExecuted in " + dispatchTimeMS + "ms (parsed in " + parseTimeMS + "ms)");
     }
 }
