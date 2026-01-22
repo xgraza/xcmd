@@ -1,5 +1,5 @@
 /*
- * Copyright (c) xgraza 2025
+ * Copyright (c) xgraza 2026
  */
 
 package us.xgraza.xcmd.registry;
@@ -23,8 +23,8 @@ public abstract class CommandRegistry implements ICommandRegistry
 {
     private final Map<String, ICommandExecutor> commandExecutorAliasMap = new LinkedHashMap<>();
     private final List<ICommandExecutor> commandExecutors = new LinkedList<>();
-    private final CommandParser commandParser = new CommandParser(this);
-    private final String commandPrefix;
+    protected final CommandParser commandParser = new CommandParser(this);
+    protected final String commandPrefix;
 
     public CommandRegistry(final String commandPrefix)
     {
